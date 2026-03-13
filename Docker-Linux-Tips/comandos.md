@@ -16,14 +16,14 @@ Para verificarmos o status de consumo podemos usar o comando `docker container s
 #### Docker file
 A criação de um Dockerfile envolve o comando `docker image build -t <nome-imagem:1.0> .` que deve ser rodado apenas quando o arquivo estiver devidamente estruturado e criado conforme exemplo:
 
-![This is an alt text.](/Docker-Linux-Tips/Imagem-Dockerfile.png "This is a sample image.")
+![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Dockerfile.png "This is a sample image.")
 
 1. A imagem criada será baseada na imagem definida aqui.
 1. Cria uma variável de ambiente.
 1. Roda o comando definido aqui durante o build da imagem.
 1. Roda determinado processo após o build da imagem.
 
-![This is an alt text.](/Docker-Linux-Tips/Imagem-Dockerfile-Imagens.png "This is a sample image.")
+![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Dockerfile-Imagens.png "This is a sample image.")
 
 O comando deve rodar passando como último parâmetro o caminho da pasta onde está o Dockerfile. A imagem vai aparecer após o build chegando com `docker images`, logo após, só efetuar o run como daemon `docker container run -d toskeira:1.0`.
 
