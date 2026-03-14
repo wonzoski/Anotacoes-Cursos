@@ -3,7 +3,9 @@ A instalação do docker `curl -fsSL httos://get.docker.com | bash` não faz gam
 \
 Para gerenciar o docker á partir de usuário comum utilize o comando `sudo usermod -aG docker <user>`.\
 \
-É importante mencionar que o principal processo de um contâiner é chamado de __*entry point*__ é o. Se este processo morre o contâiner é encerrado. Como exemplo temos a imagem Debian, após subir a imagem dê um `docker container ls` e veja na coluna _COMMAND_.\
+É importante mencionar que o principal processo de um contâiner é chamado de __*entry point*__. Se este processo morre o contâiner é encerrado. Como exemplo temos a imagem Debian, após subir a imagem dê um `docker container ls` e veja na coluna _COMMAND_.\
+\
+![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Entry-Point.png "This is a sample image.")\
 \
 Saia do container sem encerrar utilizando Ctrl+p+q.\
 \
@@ -25,7 +27,31 @@ A criação de um Dockerfile envolve o comando `docker image build -t <nome-imag
 
 ![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Dockerfile-Imagens.png "This is a sample image.")
 
-O comando deve rodar passando como último parâmetro o caminho da pasta onde está o Dockerfile. A imagem vai aparecer após o build chegando com `docker images`, logo após, só efetuar o run como daemon `docker container run -d toskeira:1.0`.
+priO comando deve rodar passando como último parâmetro o caminho da pasta onde está o Dockerfile. A imagem vai aparecer após o build chegando com `docker images`, logo após, só efetuar o run como daemon `docker container run -d primeira-imagem:1.1`.
+
+#### Volumes
+Tudo que está dentro de um contâiner uma hora morre. Caso tenha algum dado e o contâiner for finalizado todos os dados serão removidos sem possibilidade de recuperação, para isso que serve os volumes com a finalidade de persitência de dados. Uma forma de colocar um filesystem dentro do contâiner.\
+\
+Vários contâines podem usar o mesmo volume.\
+\
+Quando falamos de volumes existem duas opções dentro do docker:
+* __Tipo bind__: Quando já tem um diretório, por exemplo `/opt/girocops` e deseja montar esse mesmo diretório dentro do contâiner. Utilize o comando `docker container run -it --mount type=bind,src=/opt/giropops,dst=/giropops debian`, após ser definido os parâmetros do volume ainda é possível definir se ele é somente leitura inserindo no final o `ro`, `docker container run -it --mount type=bind,src=/opt/giropops,dst=/giropops,ro debian`, logo não será possível remover os arquivos criados lá.
+    * __type__: Tipo do volume, alterna entre bind e volume.
+    * __src__: Caminho onde será feito a montagem do volume.
+    * __dst__: Caminho onde será feito a montagem do volume no contâiner.
+    * __debian__: Imagem base criada.
+![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Volume.png "This is a sample image.")
+
+* __Tipo volume__: A criação se dá um base no comando `docker volume create`. No exemplo vamos usar o `docker volume create giropops`. Após a criação podemos inspecinar ele com `docker container inspect giropops`. Observe o caminho de ponto de montagem dele na linha _Mountpoint_. Todo e qualquer volume no docker vai estar neste caminho especificado. 
+![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Volume-Caminho-completo.png "This is a sample image.")
+
+    Podemos por exemplo acessar o diretório e criar algo lá o que vai ficar visível no contâiner que tiver esse volume aderido.
+
+    Utilize o comando `docker volume ls` para listar os volumes existentes no sistema.
+
+    Agora para fazendo a adesão desse volume para um contâiner pode ser feito da mesma forma como foi feito no tipo de volume bind. `docker container run -it --mount type=volume,src=giropops,dst=/giropops debian`, o que será alterado é o _type_ e _src_ basicamente.
+
+Sobre o `docker volume rm`, podemos remover um volume apenas se não tiver algum contâiner entrelaçado com ele, mesmo que esse contâiner não esteja ativo é necessário remover ele com `docker container rm`.
 
 ## Listagem de comandos
 🔹Instalação do docker:
@@ -121,4 +147,19 @@ docker container update --cpus 0.2 <imagem>
 🔹Á partir de um dockerfile cria uma imagem:
 ```
 docker image build -t <nome-imagem:1.0> .
+```
+\
+🔹Criar um volume:
+```
+docker container run -it --mount type=<bind,volume>,src=<caminho-origem>,dst=<caminho-no-container>,<'os'-para-read-only> <imagem>
+```
+\
+🔹Lista os volumes:
+```
+docker volume ls
+```
+\
+🔹Remove os volumes:
+```
+docker volume rm
 ```
