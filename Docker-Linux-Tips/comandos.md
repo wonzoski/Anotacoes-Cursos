@@ -11,7 +11,7 @@ Saia do container sem encerrar utilizando Ctrl+p+q.\
 \
 Quando subimos a imagem do nginx por exemplo com `docker container run -ti nginx` note que ele irá acessar o contâiner mais ficarà travado no console. Isso significa que foi iniciado no entrypoint da imagem do nginx que é o próprio processo no nginx e não um terminal como o bash. Neste caso pode ser utilizado o comando `docker container run -d nginx`. Utilize `docker container exec -ti nginx bash` para acessar o shell na imagem do nginx.\
 \
-No processo de remoção do contâiner `docker container rm` ele não vai deixar remover por padrão de segurança informando que já está em execução. Para forçar utilize a atribuição `-f` para forçar.\
+No processo de remoção do contâiner `docker container rm` ele não vai deixar remover por padrão de segurança informando que já está em execução. Para forçar utilize a atribuição `-f` para forçar. Para remover todos os contâiners que estão parados use o `docker contâiner prune`\
 \
 Para verificarmos o status de consumo podemos usar o comando `docker container stats`(retornar o percentual de utilização do CPU, memória e I/O)  ou `docker container top` (retorna os processos). Para testar os atributos de status do contâiner podemos usar o comando stress instalando no contâiner desejado. `apt update && apt install stress`. Use o comando `stress --cpu 1 --vm-bytes 128M --vm 1`.
 
@@ -42,7 +42,7 @@ Quando falamos de volumes existem duas opções dentro do docker:
     * __debian__: Imagem base criada.
 ![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Volume.png "This is a sample image.")
 
-* __Tipo volume__: A criação se dá um base no comando `docker volume create`. No exemplo vamos usar o `docker volume create giropops`. Após a criação podemos inspecinar ele com `docker container inspect giropops`. Observe o caminho de ponto de montagem dele na linha _Mountpoint_. Todo e qualquer volume no docker vai estar neste caminho especificado. 
+
 ![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Volume-Caminho-completo.png "This is a sample image.")
 
     Podemos por exemplo acessar o diretório e criar algo lá o que vai ficar visível no contâiner que tiver esse volume aderido.
@@ -53,6 +53,26 @@ Quando falamos de volumes existem duas opções dentro do docker:
 
 Sobre o `docker volume rm`, podemos remover um volume apenas se não tiver algum contâiner entrelaçado com ele, mesmo que esse contâiner não esteja ativo é necessário remover ele com `docker container rm`.
 
+Observe que os informações de volume podem ser verificadas através do comando `docker container inspect <container>`
+
+```
+"Mounts": [
+    {
+        "Type": "bind",
+        "Source": "/opt/girocops",
+        "Destination": "/girocops",
+        "Mode": "",
+        "RW": true,
+        "Propagation": "rprivate"
+    }
+],
+```
+Ao mexermos com volumes podemos nos deparar com alguns que podem não estar sendo utilizados por algum contâiner, para remover esses volumes que não está ligados a nenhum contâiner use o `docker volume prune`.
+
+
+
+
+
 ## Listagem de comandos
 🔹Instalação do docker:
 ```
@@ -62,6 +82,11 @@ curl -fsSL https://get.docker.com | bash
 🔹Lista todos os containers ativos e inativos:
 ```
 docker container ls -a
+```
+\
+🔹Cria um contâiner:
+```
+docker container create <imagem>
 ```
 \
 🔹 Inicia o container em seu entry point:
@@ -124,6 +149,11 @@ docker container logs -f <imagem>
 docker container rm <imagem>
 ```
 \
+🔹Remove contâiners que estão parados:
+```
+docker container prune
+```
+\
 🔹Retorna o status de utilização de recurso do contâiner:
 ```
 docker container stats <imagem>
@@ -162,4 +192,8 @@ docker volume ls
 🔹Remove os volumes:
 ```
 docker volume rm
+```
+🔹Remove volumes que não estão sendo usados:
+```
+docker volume prune
 ```
