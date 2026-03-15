@@ -43,6 +43,7 @@ Quando falamos de volumes existem duas opções dentro do docker:
 ![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Volume.png "This is a sample image.")
 
 
+* __Tipo volume__: A criação se dá um base no comando `docker volume create`. No exemplo vamos usar o `docker volume create giropops`. Após a criação podemos inspecionar ele com `docker container inspect giropops`. Observe o caminho de ponto de montagem dele na linha _Mountpoint_. Todo volume criado com tipo _volume_ no docker vai estar neste caminho especificado. 
 ![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Volume-Caminho-completo.png "This is a sample image.")
 
     Podemos por exemplo acessar o diretório e criar algo lá o que vai ficar visível no contâiner que tiver esse volume aderido.
