@@ -9,9 +9,9 @@ Para gerenciar o docker á partir de usuário comum utilize o comando `sudo user
 \
 Saia do container sem encerrar utilizando Ctrl+p+q.\
 \
-Quando subimos a imagem do nginx por exemplo com `docker container run -ti nginx` note que ele irá acessar o contâiner mais ficarà travado no console. Isso significa que foi iniciado no entrypoint da imagem do nginx que é o próprio processo no nginx e não um terminal como o bash. Neste caso pode ser utilizado o comando `docker container run -d nginx`. Utilize `docker container exec -ti nginx bash` para acessar o shell na imagem do nginx.\
+Quando subimos a imagem do nginx por exemplo com `docker container run -ti nginx` note que ele irá acessar o contâiner mas ficará travado no console. Isso significa que foi iniciado no entrypoint da imagem do nginx que é o próprio processo no nginx e não um terminal como o bash. Neste caso pode ser utilizado o comando `docker container run -d nginx`. Utilize `docker container exec -ti nginx bash` para acessar o shell na imagem do nginx.\
 \
-No processo de remoção do contâiner `docker container rm` ele não vai deixar remover por padrão de segurança informando que já está em execução. Para forçar utilize a atribuição `-f` para forçar. Para remover todos os contâiners que estão parados use o `docker contâiner prune`\
+No processo de remoção do contâiner `docker container rm` ele não vai deixar remover por padrão de segurança informando que já está em execução. Para forçar utilize a atribuição `-f`. Para remover todos os contâiners que estão parados use o `docker contâiner prune`\.
 \
 Para verificarmos o status de consumo podemos usar o comando `docker container stats`(retornar o percentual de utilização do CPU, memória e I/O)  ou `docker container top` (retorna os processos). Para testar os atributos de status do contâiner podemos usar o comando stress instalando no contâiner desejado. `apt update && apt install stress`. Use o comando `stress --cpu 1 --vm-bytes 128M --vm 1`.
 
@@ -54,7 +54,7 @@ Quando falamos de volumes existem duas opções dentro do docker:
 
 Sobre o `docker volume rm`, podemos remover um volume apenas se não tiver algum contâiner entrelaçado com ele, mesmo que esse contâiner não esteja ativo é necessário remover ele com `docker container rm`.
 
-Observe que os informações de volume podem ser verificadas através do comando `docker container inspect <container>`
+Observe que as informações de volume podem ser verificadas através do comando `docker container inspect <container>`
 
 ```
 "Mounts": [
@@ -68,7 +68,7 @@ Observe que os informações de volume podem ser verificadas através do comando
     }
 ],
 ```
-Ao mexermos com volumes podemos nos deparar com alguns que podem não estar sendo utilizados por algum contâiner, para remover esses volumes que não está ligados a nenhum contâiner use o `docker volume prune`.
+Ao mexermos com volumes podemos nos deparar com alguns que podem não estar sendo utilizados por algum contâiner, para remover esses volumes use `docker volume prune`.
 
 
 
