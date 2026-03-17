@@ -15,21 +15,7 @@ No processo de remoção do contâiner `docker container rm` ele não vai deixar
 \
 Para verificarmos o status de consumo podemos usar o comando `docker container stats`(retornar o percentual de utilização do CPU, memória e I/O)  ou `docker container top` (retorna os processos). Para testar os atributos de status do contâiner podemos usar o comando stress instalando no contâiner desejado. `apt update && apt install stress`. Use o comando `stress --cpu 1 --vm-bytes 128M --vm 1`.
 
-#### Docker file
-A criação de um Dockerfile envolve o comando `docker image build -t <nome-imagem:1.0> .` que deve ser rodado apenas quando o arquivo estiver devidamente estruturado e criado conforme exemplo:
-
-![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Dockerfile.png "This is a sample image.")
-
-1. A imagem criada será baseada na imagem definida aqui.
-1. Cria uma variável de ambiente.
-1. Roda o comando definido aqui durante o build da imagem.
-1. Roda determinado processo após o build da imagem.
-
-![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Dockerfile-Imagens.png "This is a sample image.")
-
-priO comando deve rodar passando como último parâmetro o caminho da pasta onde está o Dockerfile. A imagem vai aparecer após o build chegando com `docker images`, logo após, só efetuar o run como daemon `docker container run -d primeira-imagem:1.1`.
-
-#### Volumes
+### Volumes
 Tudo que está dentro de um contâiner uma hora morre. Caso tenha algum dado e o contâiner for finalizado todos os dados serão removidos sem possibilidade de recuperação, para isso que serve os volumes com a finalidade de persitência de dados. Uma forma de colocar um filesystem dentro do contâiner.\
 \
 Vários contâines podem usar o mesmo volume.\
@@ -70,6 +56,41 @@ Observe que as informações de volume podem ser verificadas através do comando
 ```
 Ao mexermos com volumes podemos nos deparar com alguns que podem não estar sendo utilizados por algum contâiner, para remover esses volumes use `docker volume prune`.
 
+### Docker file
+A criação de um Dockerfile envolve o comando `docker image build -t <nome-imagem:1.0> .` que deve ser rodado apenas quando o arquivo estiver devidamente estruturado e criado conforme exemplo:
+
+![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Dockerfile.png "This is a sample image.")
+
+1. A imagem criada será baseada na imagem definida aqui.
+1. Cria uma variável de ambiente.
+1. Roda o comando definido aqui durante o build da imagem.
+1. Roda determinado processo após o build da imagem.
+
+![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Dockerfile-Imagens.png "This is a sample image.")
+
+O comando deve rodar passando como último parâmetro o caminho da pasta onde está o Dockerfile. A imagem vai aparecer após o build chegando com `docker images`, logo após, só efetuar o run como daemon `docker container run -d primeira-imagem:1.1`.
+
+Agora vamos criar um dockerfile com debian base e nele instalar o apache2.
+![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Dockerfile-apa.png "This is a sample image.")
+
+1. `FROM`: conforme já visto anteriormente a imagem é do debian.
+
+1. Vamos executar o `RUN` para atualizar os pacotes, instalar o apache e fazer a limpeza dos arquivos .deb do sistema para reduzir o tamanho da imagem.
+1. `ENV`, as variáveis de ambiente do apache. Normalmente não precisam ser definidas mas é importante antes consultar a documentação.
+1. Criação dos `LABELS` para identificação da imagem.
+1. `VOLUME` cria um ponto de persistência do tipo _volume_. Em `EXPOSE` ele documenta que o contâiner quando criado vai usar a porta 80.
+1. `COPY` vai copiar o arquivo especificado para dentro do volume do contâiner já o `ADD` faz a mesma função que o copy porém além disso, ele pode copiar arquivos tar já descompactados para dentro do contâiner. Faz o download de arquivos remotos e adiciona para dentro do contâiner.
+1. `USER` essa parâmetro faz com que rode com as permissões deste usuário.
+1. `WORKDIR` ao acessar o contâiner será aberto esse caminho especificado.
+1. `ENTRYPOINT`, conforme explicado antes esse é o principal processo do contâiner. Vamos definir ele para que ao iniciar ele, o apache vai subir e o `CMD` indica os parâmetros do `apachectl` que serão executados, esse método é chamado de modo exec. Na última linha temos um outro método de uso em vez do `entrypoint` onde podemos usar tudo em uma linha. O indicado nas documentações é sempre usar o primeiro modelo, método chamado de shell.
+    * O `entrypoint` precisa sempre estar rodando em primero plano, e foi o que foi feito no entrypoint chamando o `FOREGROUND`.
+
+Por fim o comando `docker container run -d -p 8080:80 meu_apache:2.0.0` para buildar a imagem e atribuir uma porta para ele.
+
+### Criando imagens
+Uma imagem seria com se fosse basicamente um contâiner parado, que não está em execução. É a imagem a responsável de dar a possibilidade de criar um contâiner. \
+\
+Dependendo da imagem utilizada verifique as variáveis de ambiente na documentação da imagem do dockerhub.
 
 
 
