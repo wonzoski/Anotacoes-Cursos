@@ -5,7 +5,7 @@ Para gerenciar o docker á partir de usuário comum utilize o comando `sudo user
 \
 É importante mencionar que o principal processo de um contâiner é chamado de __*entry point*__. Se este processo morre o contâiner é encerrado. Como exemplo temos a imagem Debian, após subir a imagem dê um `docker container ls` e veja na coluna _COMMAND_.\
 \
-![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Entry-Point.png "This is a sample image.")\
+![This is an alt text.](Imagens/Imagem-Entry-Point.png "This is a sample image.")\
 \
 Saia do container sem encerrar utilizando Ctrl+p+q.\
 \
@@ -26,11 +26,11 @@ Quando falamos de volumes existem duas opções dentro do docker:
     * __src__: Caminho onde será feito a montagem do volume.
     * __dst__: Caminho onde será feito a montagem do volume no contâiner.
     * __debian__: Imagem base criada.
-![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Volume.png "This is a sample image.")
+![This is an alt text.](Imagens/Imagem-Volume.png "This is a sample image.")
 
 
 * __Tipo volume__: A criação se dá um base no comando `docker volume create`. No exemplo vamos usar o `docker volume create giropops`. Após a criação podemos inspecionar ele com `docker container inspect giropops`. Observe o caminho de ponto de montagem dele na linha _Mountpoint_. Todo volume criado com tipo _volume_ no docker vai estar neste caminho especificado. 
-![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Volume-Caminho-completo.png "This is a sample image.")
+![This is an alt text.](Imagens/Imagem-Volume-Caminho-completo.png "This is a sample image.")
 
     Podemos por exemplo acessar o diretório e criar algo lá o que vai ficar visível no contâiner que tiver esse volume aderido.
 
@@ -59,19 +59,19 @@ Ao mexermos com volumes podemos nos deparar com alguns que podem não estar send
 ### Docker file
 A criação de um Dockerfile envolve o comando `docker image build -t <nome-imagem:1.0> .` que deve ser rodado apenas quando o arquivo estiver devidamente estruturado e criado conforme exemplo:
 
-![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Dockerfile.png "This is a sample image.")
+![This is an alt text.](/Imagens/Imagem-Dockerfile.png "This is a sample image.")
 
 1. A imagem criada será baseada na imagem definida aqui.
 1. Cria uma variável de ambiente.
 1. Roda o comando definido aqui durante o build da imagem.
 1. Roda determinado processo após o build da imagem.
 
-![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Dockerfile-Imagens.png "This is a sample image.")
+![This is an alt text.](/Imagens/Imagem-Dockerfile-Imagens.png "This is a sample image.")
 
 O comando deve rodar passando como último parâmetro o caminho da pasta onde está o Dockerfile. A imagem vai aparecer após o build chegando com `docker images`, logo após, só efetuar o run como daemon `docker container run -d primeira-imagem:1.1`.
 
 Agora vamos criar um dockerfile com debian base e nele instalar o apache2.
-![This is an alt text.](/Docker-Linux-Tips/Imagens/Imagem-Dockerfile-apa.png "This is a sample image.")
+![This is an alt text.](/Imagens/Imagem-Dockerfile-apa.png "This is a sample image.")
 
 1. `FROM`: conforme já visto anteriormente a imagem é do debian.
 
@@ -87,13 +87,58 @@ Agora vamos criar um dockerfile com debian base e nele instalar o apache2.
 
 Por fim o comando `docker container run -d -p 8080:80 meu_apache:2.0.0` para buildar a imagem e atribuir uma porta para ele.
 
-### Criando imagens
+#### Criando imagens
 Uma imagem seria com se fosse basicamente um contâiner parado, que não está em execução. É a imagem a responsável de dar a possibilidade de criar um contâiner. \
 \
 Dependendo da imagem utilizada verifique as variáveis de ambiente na documentação da imagem do dockerhub.
 
+Documentação obrigatória para leitura:
+* https://docs.docker.com/reference/dockerfile
+* https://docs.docker.com/get-started/docker-concepts/building-images/writing-a-dockerfile/
 
+#### Subindo as imagens do docker hub
+```
+docker login
+```
+O Docker não permite enviar uma imagem com nome genérico (ex: minha-app) para um registry remoto. Você precisa "renomear" a imagem local para incluir o endereço do registry e o seu usuário.
 
+```
+docker image tag <image id> <user/container:1.0.0>
+```
+* EX: docker image tag b8d50f021582 fwonzoski/nginx:1.0.0
+
+```
+docker push fwonzoski/nginx:1.0.0`
+```
+* EX: docker push fwonzoski/nginx:1.0.0
+
+#### Criando o registry
+Um Docker Registry é um serviço de armazenamento e distribuição de imagens Docker. Pense nele como o "GitHub para imagens de container".
+
+Ele permite que você salve (push), baixe (pull) e gerencie versões das suas imagens.
+
+Se você quiser testar o fluxo de push/pull sem usar a internet ou criar contas, pode subir um registry oficial do Docker na sua máquina:
+
+```
+docker container run -d -p 5000:5000 --restart=always --name registry registry:2
+```
+Sempre que for usar o registry é necessário tagear a imagem conforme o nome do registry:
+```
+docker tag <id_imagem> localhost:5000/imagem:1.0.0
+```
+Push e Pull local
+```
+docker push localhost:5000/meu-site:v1
+docker pull localhost:5000/meu-site:v1
+```
+Para verificar as imagens:
+```
+curl localhost:5000/v2/_catalog
+```
+Para verificar as tags de uma imagem:
+```
+curl localhost:5000/v2/meu_apache/tags/list
+```
 
 ## Listagem de comandos
 🔹Instalação do docker:
